@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import os
 import re
+from pathlib import Path
 from typing import Any
 
 import requests
+from dotenv import load_dotenv
 
 _COMPANY_FACTS_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
 _CIK_PATTERN = re.compile(r"^\d{1,10}$")
@@ -26,6 +28,7 @@ class CompanyFactsClient:
         timeout: float | None = None,
         session: requests.Session | None = None,
     ) -> None:
+        load_dotenv(dotenv_path=Path.cwd() / ".env", override=False)
         agent = user_agent or os.getenv("SEC_USER_AGENT")
         if not agent or not agent.strip():
             raise ValueError(
