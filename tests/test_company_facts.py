@@ -61,3 +61,33 @@ def test_propagates_http_errors() -> None:
 
     with pytest.raises(requests.HTTPError, match="rate limited"):
         client.get_company_facts("1")
+
+
+def test_loads_configuration_from_dotenv_file(tmp_path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("SEC_USER_AGENT", raising=False)
+    monkeypatch.delenv("SEC_API_TIMEOUT", raising=False)
+    (tmp_path / ".env").write_text(
+        "SEC_USER_AGENT=Dotenv Test dotenv@example.com\nSEC_API_TIMEOUT=7\n"
+    )
+    session, _ = mocked_session({"facts": {}})
+
+    client = CompanyFactsClient(session=session)
+
+    assert client._headers["User-Agent"] == "Dotenv Test dotenv@example.com"
+    assert client._timeout == 7
+
+
+def test_environment_variables_override_dotenv_file(tmp_path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / ".env").write_text(
+        "SEC_USER_AGENT=Dotenv Test dotenv@example.com\nSEC_API_TIMEOUT=7\n"
+    )
+    monkeypatch.setenv("SEC_USER_AGENT", "Environment Test env@example.com")
+    monkeypatch.setenv("SEC_API_TIMEOUT", "11")
+    session, _ = mocked_session({"facts": {}})
+
+    client = CompanyFactsClient(session=session)
+
+    assert client._headers["User-Agent"] == "Environment Test env@example.com"
+    assert client._timeout == 11
