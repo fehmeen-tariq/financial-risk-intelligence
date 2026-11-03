@@ -39,7 +39,7 @@ python -m pip install -e '.[dev]'
 cp .env.example .env
 ```
 
-Set `SEC_USER_AGENT` in your environment (or `.env`) to an application identifier with a contact email, following SEC guidance. This project does not load `.env` automatically; export the values before running Python.
+The client loads `.env` from the current working directory when it is initialized. Values already set in the process environment take precedence over `.env`. Set `SEC_USER_AGENT` to an application identifier with a contact email, following SEC guidance. You can also set `SEC_API_TIMEOUT` (default: 20 seconds) in `.env` or the process environment.
 
 ## SEC Company Facts client
 
