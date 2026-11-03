@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Generated SEC and analysis datasets
+data/raw/
+data/processed/
